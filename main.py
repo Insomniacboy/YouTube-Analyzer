@@ -7,6 +7,8 @@ import os
 from youtube import YouTube
 import re
 import csv
+import locale
+from decimal import Decimal
 
 emoji_pattern = re.compile("["
         u"\U0001F600-\U0001F64F"  # emoticons
@@ -17,6 +19,8 @@ emoji_pattern = re.compile("["
 
 # Main function
 if __name__ == '__main__':
+    # set locale
+    locale.setlocale(locale.LC_ALL, 'en_US')
     # get sample size
     sample_size = 50
     if os.path.exists('sample_size.txt'):
@@ -36,10 +40,10 @@ if __name__ == '__main__':
     #         print(video)
 
     # Write to Excel file
-    csv_columns = ['Channel', 'Video', 'Views', 'Likes']
+    csv_columns = ['Channel', 'Video', 'Views', 'Likes', 'URL']
     with open('output.csv', 'w') as f:
         writer = csv.DictWriter(f, fieldnames=csv_columns)
         writer.writeheader()
         for channel in channels:
             for video in channel.videos:
-                writer.writerow({'Channel': channel.author, 'Video': emoji_pattern.sub(r'', video.title), 'Views': video.views, 'Likes': video.likes})
+                writer.writerow({'Channel': channel.author, 'Video': emoji_pattern.sub(r'', video.title), 'Views': "{:,}".format(int(video.views)), 'Likes': "{:,}".format(int(video.likes)), 'URL': video.url})
