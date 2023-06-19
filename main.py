@@ -208,7 +208,7 @@ if __name__ == '__main__':
             for i in range(1, 10):
                 video = VideoFileClip('./data/videos/' + mashupList[i].title + '.mp4').fx(vfx.speedx, mashupList[i].speed_rate)
                 mashup = concatenate_videoclips([mashup, video])
-            mashup.write_videofile('./data/mashups/mashup-{}.mp4'.format(datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')))
+            mashup.write_videofile('./data/mashups/mashup-{}.mp4'.format(datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')), codec='libx264', audio_codec='aac', bitrate='10000k')
 
             print('Удаление исходных видео...')
 
