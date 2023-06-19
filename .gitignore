@@ -160,5 +160,10 @@ cython_debug/
 #.idea/
 
 # temp files
-api_key.py
 output.csv
+client_secret.json
+*.json
+test.py
+data/videos
+data/mashups
+api_key.py

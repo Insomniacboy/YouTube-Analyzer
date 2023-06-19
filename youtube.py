@@ -4,7 +4,9 @@
 import requests
 import json
 from video import Video
-from api_key import API_KEY
+from my_video import MyVideo
+from api_key import API_KEY, MY_CHANNEL_ID
+from oauth import get_credentials
 
 class YouTube:
     # Static variables
@@ -20,15 +22,24 @@ class YouTube:
     url = ''
     videos = []
 
-    def __init__(self, url, sample_size=50):
-        self.author = YouTube.get_channel_author(self, url)
-        # delete @ symbol
-        if self.author[0] == '@':
-            self.author = self.author[1:]
-        self.url = url
-        if self.author != 'Invalid URL' and self.channelId == '':
-            self.channelId = YouTube.get_channel_id_by_author(self.author)
-        self.videos = YouTube.get_videos(self, sample_size)
+    def __init__(self, *args):
+        sample_size = 50
+        if len(args) == 1:
+            sample_size = args[0] * 4
+            self.channelId = MY_CHANNEL_ID
+            self.author = YouTube.get_channel_author_by_id(self, MY_CHANNEL_ID)
+            self.url = 'https://www.youtube.com/channel/' + MY_CHANNEL_ID
+            self.videos = YouTube.get_my_videos(self, sample_size)
+        else:
+            sample_size = args[1]
+            self.author = YouTube.get_channel_author(self, args[0])
+            # delete @ symbol
+            if self.author[0] == '@':
+                self.author = self.author[1:]
+            self.url = args[0]
+            if self.author != 'Invalid URL' and self.channelId == '':
+                self.channelId = YouTube.get_channel_id_by_author(self.author)
+            self.videos = YouTube.get_videos(self, sample_size)
 
     def get_channel_author(self, url):
         try:
@@ -57,6 +68,21 @@ class YouTube:
         for item in response.json()['items']:
             video = Video(item['id']['videoId'])
             videos_list.append(video)
+        return videos_list
+    
+    def get_my_videos(self, sample_size):
+        access_token = get_credentials().token
+        videos_list = []
+        url = YouTube.VIDEO_URL + self.channelId + '&maxResults=' + str(sample_size)
+        response = requests.get(url)
+
+        with open('response.json', 'w') as f:
+            json.dump(response.json(), f)
+
+        for item in response.json()['items']:
+            video = MyVideo(item['id']['videoId'], access_token)
+            if video.duration > 60 and video.duration <= 180:
+                videos_list.append(video)
         return videos_list
 
     def __str__(self):
