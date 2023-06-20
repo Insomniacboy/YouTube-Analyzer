@@ -45,7 +45,7 @@ def convert_to_seconds(time):
 # Convert seconds to human readable time
 def convert_to_time(seconds):
     minutes = int(seconds / 60)
-    seconds = seconds % 60
+    seconds = int(seconds % 60)
     return '{:02d}:{:02d}'.format(minutes, seconds)
 
 # Main function
