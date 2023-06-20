@@ -36,6 +36,18 @@ def hash(s):
         hash = ord(c) + (hash << 6) + (hash << 16) - hash
     return hash
 
+# Convert human readable time to seconds
+def convert_to_seconds(time):
+    minutes = time.split(':')[0]
+    seconds = time.split(':')[1]
+    return int(minutes) * 60 + int(seconds)
+
+# Convert seconds to human readable time
+def convert_to_time(seconds):
+    minutes = int(seconds / 60)
+    seconds = seconds % 60
+    return '{:02d}:{:02d}'.format(minutes, seconds)
+
 # Main function
 if __name__ == '__main__':
     try:
@@ -202,22 +214,41 @@ if __name__ == '__main__':
 
             print('Создание мэшапа...')
 
+            # create timestamps for mashup in a format like this: 00:00 - 00:30 Video Title; don't forget to count speed rate
+
+            timestamps = []
+
+            curr_time = '00:00'
+
             # create mashup.mp4 from videos in mashup folder
 
-            mashup = VideoFileClip('./data/videos/' + mashupList[0].title + '.mp4').fx(vfx.speedx, mashupList[0].speed_rate)
+            mashup = VideoFileClip('./data/videos/' + mashupList[0].safe_title + '.mp4').fx(vfx.speedx, mashupList[0].speed_rate)
+            timestamps.append(curr_time + ' - ' + mashupList[0].title)
+            curr_time = convert_to_time(mashupList[0].duration / mashupList[0].speed_rate)
             for i in range(1, 10):
-                video = VideoFileClip('./data/videos/' + mashupList[i].title + '.mp4').fx(vfx.speedx, mashupList[i].speed_rate)
+                video = VideoFileClip('./data/videos/' + mashupList[i].safe_title + '.mp4').fx(vfx.speedx, mashupList[i].speed_rate)
                 mashup = concatenate_videoclips([mashup, video])
+                timestamps.append(curr_time + ' - ' + mashupList[i].title)
+                curr_time = convert_to_time(mashupList[i].duration / mashupList[i].speed_rate + convert_to_seconds(curr_time))
+
             # check if mashups folder exists
             if not os.path.isdir('./data/mashups'):
                 os.mkdir('./data/mashups')
             mashup.write_videofile('./data/mashups/mashup-{}.mp4'.format(datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')), codec='libx264', audio_codec='aac', bitrate='10000k')
+
+            print('Запись таймстампов...')
+
+            # write timestamps to txt file
+
+            with open('./data/mashups/mashup-{}.txt'.format(datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')), 'w') as f:
+                for timestamp in timestamps:
+                    f.write(timestamp + '\n')
 
             print('Удаление исходных видео...')
 
             # delete videos from mashup folder
 
             for video in mashupList:
-                os.remove('./data/videos/' + video.title + '.mp4')
+                os.remove('./data/videos/' + video.safe_title + '.mp4')
     except KeyboardInterrupt:
         print('Выполнение программы прервано')

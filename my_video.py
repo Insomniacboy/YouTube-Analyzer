@@ -48,6 +48,7 @@ class MyVideo:
 
     # Object variables
     title = ''
+    safe_title = ''
     date = ''
     views = 0
     likes = 0
@@ -61,8 +62,8 @@ class MyVideo:
         response = requests.get(url)
 
         self.title = response.json()['items'][0]['snippet']['title']
-        self.title = re.sub(r'[ :?!\'\".,;(){}\[\]/\\|]', '', self.title)
-        self.title = self.title.replace('|', '_')
+        self.safe_title = re.sub(r'[ :?!\'\".,;(){}\[\]/\\|]', '', self.title)
+        self.safe_title = self.safe_title.replace('|', '_')
         self.date = prettydate(datetime.datetime.strptime(response.json()['items'][0]['snippet']['publishedAt'], '%Y-%m-%dT%H:%M:%SZ'))
         self.views = response.json()['items'][0]['statistics']['viewCount']
         self.likes = response.json()['items'][0]['statistics']['likeCount']
@@ -75,7 +76,7 @@ class MyVideo:
 
     def download(self):
         video = pytube.YouTube(self.url)
-        video._title = self.title
+        video._title = self.safe_title
         video = video.streams.get_highest_resolution()
 
         try:

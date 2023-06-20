@@ -30,6 +30,7 @@ class YouTube:
             self.author = YouTube.get_channel_author_by_id(self, MY_CHANNEL_ID)
             self.url = 'https://www.youtube.com/channel/' + MY_CHANNEL_ID
             self.videos = YouTube.get_my_videos(self, sample_size)
+            self.videos.reverse()
         else:
             sample_size = args[1]
             self.author = YouTube.get_channel_author(self, args[0])
@@ -40,6 +41,7 @@ class YouTube:
             if self.author != 'Invalid URL' and self.channelId == '':
                 self.channelId = YouTube.get_channel_id_by_author(self.author)
             self.videos = YouTube.get_videos(self, sample_size)
+            self.videos.reverse()
 
     def get_channel_author(self, url):
         try:
