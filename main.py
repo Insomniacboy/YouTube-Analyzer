@@ -155,15 +155,19 @@ if __name__ == '__main__':
                         randomIndex = random.randint(0, sample_size - 1)
                     mashupList.append(myChannel.videos[randomIndex])
 
+                # create copy of mashupList to hash
+
+                mashupListCopy = mashupList.copy()
+
                 # sort mashup list by title
 
-                mashupList.sort(key=lambda x: x.title)
+                mashupListCopy.sort(key=lambda x: x.title)
 
                 print('Список для мэшапа создан. Хэшируем...')
 
                 # create hash for mashup
                 mashupHash = 0
-                for video in mashupList:
+                for video in mashupListCopy:
                     mashupHash += hash(video.title)
                 mashupHash = mashupHash % 1000000
 

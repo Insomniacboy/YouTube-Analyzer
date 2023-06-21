@@ -30,7 +30,6 @@ class YouTube:
             self.author = YouTube.get_channel_author_by_id(self, MY_CHANNEL_ID)
             self.url = 'https://www.youtube.com/channel/' + MY_CHANNEL_ID
             self.videos = YouTube.get_my_videos(self, sample_size)
-            self.videos.reverse()
         else:
             sample_size = args[1]
             self.author = YouTube.get_channel_author(self, args[0])
@@ -77,9 +76,6 @@ class YouTube:
         videos_list = []
         url = YouTube.VIDEO_URL + self.channelId + '&maxResults=' + str(sample_size)
         response = requests.get(url)
-
-        with open('response.json', 'w') as f:
-            json.dump(response.json(), f)
 
         for item in response.json()['items']:
             video = MyVideo(item['id']['videoId'], access_token)
