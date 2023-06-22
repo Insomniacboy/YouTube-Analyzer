@@ -85,7 +85,7 @@ if __name__ == '__main__':
                     print_progress_bar(nProcessed, nTotal)
 
             # Write to Excel file
-            csv_columns = ['Channel', 'Video', 'Views', 'Likes', 'URL', 'Date']
+            csv_columns = ['Channel', 'Video', 'Views', 'Date', 'Likes', 'URL']
             with open('output.csv', 'w') as f:
                 writer = csv.DictWriter(f, fieldnames=csv_columns)
                 writer.writeheader()
@@ -97,7 +97,7 @@ if __name__ == '__main__':
                         except:
                             views = video.views
                             likes = video.likes
-                        writer.writerow({'Channel': channel.author, 'Video': emoji_pattern.sub(r'', video.title), 'Views': views, 'Likes': likes, 'URL': video.url, 'Date': video.date})
+                        writer.writerow({'Channel': channel.author, 'Video': emoji_pattern.sub(r'', video.title), 'Views': views, 'Date': video.date, 'Likes': likes, 'URL': video.url})
         else:
             # get sample size from input
             print('Введите количество последних видео для анализа (минимум 15): ', end='')
@@ -125,9 +125,34 @@ if __name__ == '__main__':
 
                 print('Создание списка для мэшапа...')
 
-                # add last video from my channel
+                questions = [
+                    {"type": "list", "message": "Сделать первым видео:", "name": "choice", "choices": ["Последнее на канале", "Добавить вручную по cсылке"]},
+                ]
+                answers = prompt(questions)
 
-                mashupList.append(myChannel.videos[0])
+                if answers["choice"] == "Последнее на канале":
+
+                    myChannel.videos[0].set_speed_rate(1.00)
+
+                    # add last video from my channel
+
+                    mashupList.append(myChannel.videos[0])
+
+                else: 
+                    questions = [
+                        {"type": "input", "message": "Введите ссылку на видео:", "name": "url"},
+                    ]
+                    answers = prompt(questions)
+
+                    myChannel.appendVideo(answers["url"].split('=')[1])
+
+                    # change speed rate for added video
+
+                    myChannel.videos[len(myChannel.videos) - 1].set_speed_rate(1.00)
+
+                    # add this video to mashupList
+
+                    mashupList.append(myChannel.videos[len(myChannel.videos) - 1])
 
                 # take 10 videos with highest retention rate and pick 5 of them randomly
 

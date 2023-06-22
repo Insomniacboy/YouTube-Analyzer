@@ -6,29 +6,6 @@ from api_key import API_KEY
 import random
 import pytube
 import re
-
-# Code from https://stackoverflow.com/questions/410221/natural-relative-days-in-python
-def prettydate(d):
-    diff = datetime.datetime.utcnow() - d
-    s = diff.seconds
-    if diff.days > 7 or diff.days < 0:
-        return d.strftime('%d %b %y')
-    elif diff.days == 1:
-        return '1 day ago'
-    elif diff.days > 1:
-        return '{} days ago'.format(diff.days)
-    elif s <= 1:
-        return 'just now'
-    elif s < 60:
-        return '{} seconds ago'.format(s)
-    elif s < 120:
-        return '1 minute ago'
-    elif s < 3600:
-        return '{} minutes ago'.format(int(s/60))
-    elif s < 7200:
-        return '1 hour ago'
-    else:
-        return '{} hours ago'.format(int(s/3600))
     
 def convert_to_seconds(period):
     period = period.replace('PT', '')
@@ -64,7 +41,7 @@ class MyVideo:
         self.title = response.json()['items'][0]['snippet']['title']
         self.safe_title = re.sub(r'[ :?!\'\".,;(){}\[\]/\\|]', '', self.title)
         self.safe_title = self.safe_title.replace('|', '_')
-        self.date = prettydate(datetime.datetime.strptime(response.json()['items'][0]['snippet']['publishedAt'], '%Y-%m-%dT%H:%M:%SZ'))
+        self.date = datetime.datetime.strptime(response.json()['items'][0]['snippet']['publishedAt'], '%Y-%m-%dT%H:%M:%SZ')
         self.views = response.json()['items'][0]['statistics']['viewCount']
         self.likes = response.json()['items'][0]['statistics']['likeCount']
         self.url = 'https://www.youtube.com/watch?v=' + videoId
@@ -85,6 +62,9 @@ class MyVideo:
             print("Не получилось скачать видео", self.title, self.url)
 
         print("Видео скачано")
+
+    def set_speed_rate(self, speed_rate):
+        self.speed_rate = speed_rate
 
 
     def __str__(self):

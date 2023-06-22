@@ -82,6 +82,10 @@ class YouTube:
             if video.duration > 60 and video.duration <= 180:
                 videos_list.append(video)
         return videos_list
+    
+    def appendVideo(self, video_id):
+        video = Video(video_id)
+        self.videos.append(video)
 
     def __str__(self):
         return self.author + " - " + self.url + " - " + self.channelId
