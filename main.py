@@ -167,17 +167,17 @@ if __name__ == '__main__':
                 # pick 5 different videos randomly also check that it is not already chosen
 
                 for i in range(5):
-                    randomIndex = random.randint(0, 9)
+                    randomIndex = random.randint(0, len(top10) - 1)
                     while top10[randomIndex] in mashupList:
-                        randomIndex = random.randint(0, 9)
+                        randomIndex = random.randint(0, len(top10) - 1)
                     mashupList.append(top10[randomIndex])
                 
                 # pick 4 videos randomly except already chosen
 
                 for i in range(4):
-                    randomIndex = random.randint(0, sample_size - 1)
+                    randomIndex = random.randint(0, len(myChannel.videos) - 1)
                     while myChannel.videos[randomIndex] in mashupList:
-                        randomIndex = random.randint(0, sample_size - 1)
+                        randomIndex = random.randint(0, len(myChannel.videos) - 1)
                     mashupList.append(myChannel.videos[randomIndex])
 
                 # create copy of mashupList to hash
