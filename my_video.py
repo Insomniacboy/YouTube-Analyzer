@@ -54,7 +54,12 @@ class MyVideo:
     def download(self):
         video = pytube.YouTube(self.url)
         video._title = self.safe_title
-        video = video.streams.get_highest_resolution()
+        try:
+            video = video.streams.get_highest_resolution()
+        except Exception as e:
+            print(e)
+            print("Не получилось скачать видео", self.title, self.url)
+
 
         try:
             video.download(MyVideo.VIDEO_SAVE_DIRECTORY)
