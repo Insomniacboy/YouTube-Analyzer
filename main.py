@@ -117,7 +117,7 @@ if __name__ == '__main__':
 
                 print('Обработка видео...')
 
-                # We create mashup by structure: 1 last video from my channel, 5 video with highest retention rate, 4-5 videos chosen randomly except already chosen
+                # We create mashup by structure: 1 last video from my channel, 6 video with highest retention rate, 6 videos chosen randomly except already chosen
 
                 myChannel = YouTube(sample_size)
 
@@ -144,7 +144,7 @@ if __name__ == '__main__':
                     ]
                     answers = prompt(questions)
 
-                    myChannel.appendVideo(answers["url"].split('=')[1])
+                    myChannel.appendMyVideo(answers["url"].split('=')[1])
 
                     # change speed rate for added video
 
@@ -164,17 +164,17 @@ if __name__ == '__main__':
 
                 top10 = myChannel.videos[:10]
 
-                # pick 5 different videos randomly also check that it is not already chosen
+                # pick 6 different videos randomly also check that it is not already chosen
 
-                for i in range(5):
+                for i in range(6):
                     randomIndex = random.randint(0, len(top10) - 1)
                     while top10[randomIndex] in mashupList:
                         randomIndex = random.randint(0, len(top10) - 1)
                     mashupList.append(top10[randomIndex])
                 
-                # pick 4 videos randomly except already chosen
+                # pick 6 videos randomly except already chosen
 
-                for i in range(4):
+                for i in range(6):
                     randomIndex = random.randint(0, len(myChannel.videos) - 1)
                     while myChannel.videos[randomIndex] in mashupList:
                         randomIndex = random.randint(0, len(myChannel.videos) - 1)

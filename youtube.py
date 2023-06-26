@@ -79,12 +79,12 @@ class YouTube:
 
         for item in response.json()['items']:
             video = MyVideo(item['id']['videoId'], access_token)
-            if video.duration > 60 and video.duration <= 180:
+            if video.duration > 60 and video.duration <= 180 and video.downloadable() == True:
                 videos_list.append(video)
         return videos_list
     
-    def appendVideo(self, video_id):
-        video = Video(video_id)
+    def appendMyVideo(self, video_id):
+        video = MyVideo(video_id)
         self.videos.append(video)
 
     def __str__(self):

@@ -68,6 +68,17 @@ class MyVideo:
 
         print("Видео скачано")
 
+    def downloadable(self):
+        video = pytube.YouTube(self.url)
+        video._title = self.safe_title
+        try:
+            video = video.streams.get_highest_resolution()
+        except Exception as e:
+            print("Нельзя скачать видео", self.title, self.url, e)
+            print(e.__traceback__)
+            return False
+        return True
+
     def set_speed_rate(self, speed_rate):
         self.speed_rate = speed_rate
 
