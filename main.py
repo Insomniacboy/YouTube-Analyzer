@@ -239,7 +239,7 @@ if __name__ == '__main__':
             for video in mashupList:
                 video.download()
                 videoCnt += 1
-                print('{}/10'.format(videoCnt), end='\r')
+                print('{}/13'.format(videoCnt), end='\r')
 
             print('Создание мэшапа...')
 
