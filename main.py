@@ -221,6 +221,7 @@ if __name__ == '__main__':
                         writer = csv.DictWriter(f, fieldnames=['Hash', 'Videos'])
                         writer.writerow({'Hash': mashupHash, 'Videos': mashupNameList})
                         isAdded = True
+                        print('Хэш мэшапа добавлен')
                 else:
                     # create mashups.csv
                     with open('db/mashups.csv', 'w') as f:
@@ -228,6 +229,7 @@ if __name__ == '__main__':
                         writer.writeheader()
                         writer.writerow({'Hash': mashupHash, 'Videos': mashupNameList})
                         isAdded = True
+                        print('Хэш мэшапа добавлен')
                 
                 if isAdded:
                     break
