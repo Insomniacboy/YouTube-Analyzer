@@ -170,7 +170,7 @@ if __name__ == '__main__':
 
                 for i in range(6):
                     randomIndex = random.randint(0, len(top10) - 1)
-                    while top10[randomIndex] in mashupList:
+                    while top10[randomIndex] in mashupList or top10[randomIndex].title in [video.title for video in mashupList]:
                         randomIndex = random.randint(0, len(top10) - 1)
                     mashupList.append(top10[randomIndex])
                 
@@ -178,7 +178,7 @@ if __name__ == '__main__':
 
                 for i in range(6):
                     randomIndex = random.randint(0, len(myChannel.videos) - 1)
-                    while myChannel.videos[randomIndex] in mashupList:
+                    while myChannel.videos[randomIndex] in mashupList or myChannel.videos[randomIndex].title in [video.title for video in mashupList]:
                         randomIndex = random.randint(0, len(myChannel.videos) - 1)
                     mashupList.append(myChannel.videos[randomIndex])
 
@@ -280,6 +280,9 @@ if __name__ == '__main__':
             # delete videos from mashup folder
 
             for video in mashupList:
-                os.remove('./data/videos/' + video.safe_title + '.mp4')
+                try:
+                    os.remove('./data/videos/' + video.safe_title + '.mp4')
+                except OSError as e:
+                    print('Не удалось удалить видео', video.title, e)
     except KeyboardInterrupt:
         print('Выполнение программы прервано')
