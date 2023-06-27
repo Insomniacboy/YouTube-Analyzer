@@ -48,6 +48,8 @@ def convert_to_time(seconds):
     seconds = int(seconds % 60)
     return '{:02d}:{:02d}'.format(minutes, seconds)
 
+NUMBER_OF_VIDEOS = 13
+
 # Main function
 if __name__ == '__main__':
     try:
@@ -239,7 +241,7 @@ if __name__ == '__main__':
             for video in mashupList:
                 video.download()
                 videoCnt += 1
-                print('{}/13'.format(videoCnt), end='\r')
+                print('{}/{}'.format(videoCnt, NUMBER_OF_VIDEOS), end='\r')
 
             print('Создание мэшапа...')
 
@@ -254,7 +256,7 @@ if __name__ == '__main__':
             mashup = VideoFileClip('./data/videos/' + mashupList[0].safe_title + '.mp4').fx(vfx.speedx, mashupList[0].speed_rate)
             timestamps.append(curr_time + ' - ' + mashupList[0].title)
             curr_time = convert_to_time(mashupList[0].duration / mashupList[0].speed_rate)
-            for i in range(1, 10):
+            for i in range(1, NUMBER_OF_VIDEOS):
                 video = VideoFileClip('./data/videos/' + mashupList[i].safe_title + '.mp4').fx(vfx.speedx, mashupList[i].speed_rate)
                 mashup = concatenate_videoclips([mashup, video])
                 timestamps.append(curr_time + ' - ' + mashupList[i].title)
