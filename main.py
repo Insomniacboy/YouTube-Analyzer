@@ -144,7 +144,7 @@ if __name__ == '__main__':
                     ]
                     answers = prompt(questions)
 
-                    myChannel.appendMyVideo(answers["url"].split('=')[1])
+                    myChannel.appendVideo(answers["url"].split('=')[1])
 
                     # change speed rate for added video
 

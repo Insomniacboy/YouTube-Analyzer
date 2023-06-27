@@ -20,6 +20,7 @@ class YouTube:
     author = ''
     channelId = ''
     url = ''
+    access_token = ''
     videos = []
 
     def __init__(self, *args):
@@ -73,6 +74,7 @@ class YouTube:
     
     def get_my_videos(self, sample_size):
         access_token = get_credentials().token
+        self.access_token = access_token
         videos_list = []
         url = YouTube.VIDEO_URL + self.channelId + '&maxResults=' + str(sample_size)
         response = requests.get(url)
@@ -83,8 +85,8 @@ class YouTube:
                 videos_list.append(video)
         return videos_list
     
-    def appendMyVideo(self, video_id):
-        video = MyVideo(video_id)
+    def appendVideo(self, video_id):
+        video = MyVideo(video_id, self.access_token)
         self.videos.append(video)
 
     def __str__(self):
