@@ -83,7 +83,7 @@ class MyVideo:
     def set_speed_rate(self, speed_rate):
         self.speed_rate = speed_rate
 
-    def upload(self, video_path, title, description):
+    def upload(video_path, title, description):
         upload_to_youtube(video_path, title, description)
 
 

@@ -89,7 +89,7 @@ class YouTube:
         video = MyVideo(video_id, self.access_token)
         self.videos.append(video)
 
-    def uploadVideo(self, video_path, title, description):
+    def uploadVideo(video_path, title, description):
         MyVideo.upload(video_path, title, description)
 
     def __str__(self):
