@@ -293,12 +293,14 @@ if __name__ == '__main__':
                 if file.endswith('.mp4'):
                     mashups.append(file)
             # create list of choices for InquirerPy
-            choices = []
-            for mashup in mashups:
-                choices.append({'name': mashup})
+            
+            if len(mashups) == 0:
+                print('Нет мэшапов для загрузки')
+                exit(0)
+
             # ask user to choose mashup
             questions = [
-                {"type": "list", "message": "Выберите мэшап", "name": "choice", "choices": choices},
+                {"type": "list", "message": "Выберите мэшап", "name": "choice", "choices": mashups},
             ]
             answers = prompt(questions)
 
