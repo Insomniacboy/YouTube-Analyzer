@@ -267,13 +267,13 @@ if __name__ == '__main__':
             # check if mashups folder exists
             if not os.path.isdir('./data/mashups'):
                 os.mkdir('./data/mashups')
-            mashup.write_videofile('./data/mashups/mashup-{}.mp4'.format(datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')), codec='libx264', audio_codec='aac', bitrate='20000k')
+            mashup.write_videofile('./data/mashups/mashup-{}.mp4'.format(mashupHash), codec='libx264', audio_codec='aac', bitrate='20000k')
 
             print('Запись таймстампов...')
 
             # write timestamps to txt file
 
-            with open('./data/mashups/mashup-{}.txt'.format(datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')), 'w') as f:
+            with open('./data/mashups/mashup-{}.txt'.format(mashupHash), 'w') as f:
                 for timestamp in timestamps:
                     f.write(timestamp + '\n')
 
