@@ -6,6 +6,7 @@ from api_key import API_KEY
 import random
 import pytube
 import re
+from oauth import upload_to_youtube
     
 def convert_to_seconds(period):
     period = period.replace('PT', '')
@@ -81,6 +82,9 @@ class MyVideo:
 
     def set_speed_rate(self, speed_rate):
         self.speed_rate = speed_rate
+
+    def upload(self, video_path, title, description):
+        upload_to_youtube(video_path, title, description)
 
 
     def __str__(self):

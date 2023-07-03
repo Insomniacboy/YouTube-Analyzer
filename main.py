@@ -58,7 +58,7 @@ if __name__ == '__main__':
 
         # make choice whether analyze or create mashup using InquirerPy
         questions = [
-            {"type": "list", "message": "Выберите опцию", "name": "choice", "choices": ["Анализ каналов", "Создание мэшапа"]}
+            {"type": "list", "message": "Выберите опцию", "name": "choice", "choices": ["Анализ каналов", "Создание мэшапа", "Загрузить мэшап на YouTube"]}
         ]
         answers = prompt(questions)
         if answers["choice"] == "Анализ каналов":
@@ -100,7 +100,7 @@ if __name__ == '__main__':
                             views = video.views
                             likes = video.likes
                         writer.writerow({'Channel': channel.author, 'Video': emoji_pattern.sub(r'', video.title), 'Views': views, 'Date': video.date, 'Likes': likes, 'URL': video.url})
-        else:
+        elif answers["choice"] == "Создание мэшапа":
             # get sample size from input
             print('Введите количество последних видео для анализа (минимум 15): ', end='')
 
@@ -286,5 +286,42 @@ if __name__ == '__main__':
                     os.remove('./data/videos/' + video.safe_title + '.mp4')
                 except OSError as e:
                     print('Не удалось удалить видео', video.title, e)
+        elif answers["choice"] == "Загрузить мэшап на YouTube":
+            # get list of mashups from data/mashups folder
+            mashups = []
+            for file in os.listdir('./data/mashups'):
+                if file.endswith('.mp4'):
+                    mashups.append(file)
+            # create list of choices for InquirerPy
+            choices = []
+            for mashup in mashups:
+                choices.append({'name': mashup})
+            # ask user to choose mashup
+            questions = [
+                {"type": "list", "message": "Выберите мэшап", "name": "choice", "choices": choices},
+            ]
+            answers = prompt(questions)
+
+            # description is from timestamps file
+
+            # read timestamps file
+
+            timestamps = []
+
+            with open('./data/mashups/' + answers['choice'].split('.')[0] + '.txt', 'r') as f:
+                for line in f:
+                    timestamps.append(line.strip())
+            
+            # create description
+
+            description = ''
+
+            for timestamp in timestamps:
+                description += timestamp + '\n'
+
+            # upload mashup to YouTube
+            YouTube.uploadVideo('./data/mashups/' + answers['choice'], answers['choice'].split('.')[0], description)
+            
+
     except KeyboardInterrupt:
         print('Выполнение программы прервано')
