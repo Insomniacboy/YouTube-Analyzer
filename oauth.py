@@ -10,7 +10,7 @@ from googleapiclient.http import MediaFileUpload
 import datetime
 from api_key import API_KEY
 
-SCOPES = ['https://www.googleapis.com/auth/yt-analytics.readonly']
+SCOPES = ['https://www.googleapis.com/auth/yt-analytics.readonly', 'https://www.googleapis.com/auth/youtube.upload']
 
 API_SERVICE_NAME = 'youtubeAnalytics'
 API_VERSION = 'v2'
@@ -27,7 +27,7 @@ YOUTUBE_API_VERSION = "v3"
 
 def upload_to_youtube(video_path, title, description):
     try:
-        youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, developerKey=API_KEY)
+        youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, credentials=get_credentials())
         media = MediaFileUpload(video_path, chunksize=-1, resumable=True)
 
         video = youtube.videos().insert(

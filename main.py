@@ -123,6 +123,8 @@ if __name__ == '__main__':
 
                 myChannel = YouTube(sample_size)
 
+                print('Получено видео: {} штук'.format(len(myChannel.videos)))
+
                 mashupList = []
 
                 print('Создание списка для мэшапа...')
@@ -164,7 +166,7 @@ if __name__ == '__main__':
                 
                 # create list of 10 videos with highest retention rate
 
-                top10 = myChannel.videos[:10]
+                top10 = myChannel.videos[:20]
 
                 # pick 6 different videos randomly also check that it is not already chosen
 
@@ -310,10 +312,13 @@ if __name__ == '__main__':
 
             timestamps = []
 
-            with open('./data/mashups/' + answers['choice'].split('.')[0] + '.txt', 'r') as f:
-                for line in f:
-                    timestamps.append(line.strip())
-            
+            try:
+
+                with open('./data/mashups/' + answers['choice'].split('.')[0] + '.txt', 'r') as f:
+                    for line in f:
+                        timestamps.append(line.strip())
+            except:
+                print('Не удалось прочитать файл с таймстампами')
             # create description
 
             description = ''
