@@ -86,10 +86,10 @@ class YouTube:
         for i in range(times):
             for item in response.json()['items']:
                 video = MyVideo(item['id']['videoId'], access_token)
-                if video.duration > 60 and video.duration <= 180 and video.downloadable() == True:
+                if video.duration > 60 and video.duration <= 180:
                     videos_list.append(video)
                 processed_results += 1
-                print('Processed results: {}/{}'.format(processed_results, total_results))
+                print('Обработано: {}/{}'.format(processed_results, total_results))
             
             url = YouTube.VIDEO_URL + self.channelId + '&maxResults=' + str(sample_size) + '&pageToken=' + response.json()['nextPageToken']
 
