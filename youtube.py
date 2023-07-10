@@ -42,7 +42,6 @@ class YouTube:
                 self.channelId = YouTube.get_channel_id_by_author(self.author)
             self.videos = YouTube.get_videos(self, sample_size)
             self.videos.reverse()
-        print(sample_size)
 
     def get_channel_author(self, url):
         try:
@@ -80,13 +79,14 @@ class YouTube:
         url = YouTube.VIDEO_URL + self.channelId + '&maxResults=' + str(sample_size)
         response = requests.get(url)
 
-        with open('response.json', 'w') as f:
-            json.dump(response.json(), f)
+        while 'nextPageToken' in response.json():
+            for item in response.json()['items']:
+                video = MyVideo(item['id']['videoId'], access_token)
+                if video.duration > 60 and video.duration <= 180 and video.downloadable() == True:
+                    videos_list.append(video)
+            
+            url = YouTube.VIDEO_URL + self.channelId + '&maxResults=' + str(sample_size) + '&pageToken=' + response.json()['nextPageToken']
 
-        for item in response.json()['items']:
-            video = MyVideo(item['id']['videoId'], access_token)
-            if video.duration > 60 and video.duration <= 180 and video.downloadable() == True:
-                videos_list.append(video)
         return videos_list
     
     def appendVideo(self, video_id):

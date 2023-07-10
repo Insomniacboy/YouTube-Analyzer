@@ -127,9 +127,6 @@ if __name__ == '__main__':
 
                 print('Получено видео: {} штук'.format(len(myChannel.videos)))
 
-                for video in myChannel.videos:
-                    print(video.title, video.date, video.retention_rate)
-
                 mashupList = []
 
                 print('Создание списка для мэшапа...')
