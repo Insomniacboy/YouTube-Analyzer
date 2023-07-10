@@ -79,7 +79,9 @@ class YouTube:
         url = YouTube.VIDEO_URL + self.channelId + '&maxResults=' + str(sample_size)
         response = requests.get(url)
 
-        while 'nextPageToken' in response.json():
+        times = (response.json()['pageInfo']['totalResults'] + response.json()['pageInfo']['resultsPerPage'] - 1) // response.json()['pageInfo']['resultsPerPage']
+
+        for i in range(times):
             for item in response.json()['items']:
                 video = MyVideo(item['id']['videoId'], access_token)
                 if video.duration > 60 and video.duration <= 180 and video.downloadable() == True:
