@@ -162,6 +162,8 @@ if __name__ == '__main__':
 
                 # sort videos by retention rate
 
+                prevChannel = myChannel
+
                 myChannel.videos.sort(key=lambda x: x.retention_rate, reverse=True)
                 
                 # create list of 10 videos with highest retention rate
@@ -177,6 +179,8 @@ if __name__ == '__main__':
                     mashupList.append(top10[randomIndex])
                 
                 # pick 6 videos randomly except already chosen
+
+                myChannel = prevChannel
 
                 for i in range(6):
                     randomIndex = random.randint(0, len(myChannel.videos) - 1)
