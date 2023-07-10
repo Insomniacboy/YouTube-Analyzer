@@ -33,6 +33,7 @@ class YouTube:
             self.videos = YouTube.get_my_videos(self, sample_size)
         else:
             sample_size = args[1]
+            print(sample_size)
             self.author = YouTube.get_channel_author(self, args[0])
             # delete @ symbol
             if self.author[0] == '@':

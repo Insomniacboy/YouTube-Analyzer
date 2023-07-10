@@ -104,6 +104,8 @@ if __name__ == '__main__':
             # get sample size from input
             print('Введите количество последних видео для анализа (минимум 15): ', end='')
 
+            sample_size = 15
+
             while True:
                 try:
                     sample_size = int(input())
