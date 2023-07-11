@@ -88,8 +88,9 @@ class YouTube:
                 if processed_results == total_results:
                     break
                 video = MyVideo(item['id']['videoId'], access_token)
-                if video.duration > 60 and video.duration <= 180:
+                if video.duration > 60 and video.duration <= 180 and video not in videos_list:
                     videos_list.append(video)
+                    print('Добавлено видео: ' + video.title + ' - ' + str(video.duration) + ' секунд')
                 processed_results += 1
                 print('Обработано: {}/{}'.format(processed_results, total_results))
             
