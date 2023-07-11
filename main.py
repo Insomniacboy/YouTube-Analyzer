@@ -144,6 +144,8 @@ if __name__ == '__main__':
 
                     mashupList.append(myChannel.videos[0])
 
+                    print('Добавлено видео: {}'.format(myChannel.videos[0].title))
+
                 else: 
                     questions = [
                         {"type": "input", "message": "Введите ссылку на видео:", "name": "url"},
@@ -160,19 +162,25 @@ if __name__ == '__main__':
 
                     mashupList.append(myChannel.videos[len(myChannel.videos) - 1])
 
+                    print('Добавлено видео: {}'.format(myChannel.videos[len(myChannel.videos) - 1].title))
+
                 # take 10 videos with highest retention rate and pick 5 of them randomly
 
                 # sort videos by retention rate
 
-                prevChannel = myChannel
+                print('Сортировка видео по retention rate...')
 
                 myChannel.videos.sort(key=lambda x: x.retention_rate, reverse=True)
                 
-                # create list of 10 videos with highest retention rate
+                # create list of 20 videos with highest retention rate
+
+                print('Выбор 20 видео с наибольшим retention rate...')
 
                 top10 = myChannel.videos[:20]
 
                 # pick 6 different videos randomly also check that it is not already chosen
+
+                print('Выбор 6 видео из 20...')
 
                 for i in range(6):
                     randomIndex = random.randint(0, len(top10) - 1)
@@ -182,7 +190,7 @@ if __name__ == '__main__':
                 
                 # pick 6 videos randomly except already chosen
 
-                myChannel = prevChannel
+                print('Выбор 6 видео из остальных...')
 
                 for i in range(6):
                     randomIndex = random.randint(0, len(myChannel.videos) - 1)
