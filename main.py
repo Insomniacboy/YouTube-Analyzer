@@ -176,17 +176,16 @@ if __name__ == '__main__':
 
                 print('Выбор 20 видео с наибольшим retention rate...')
 
-                top10 = myChannel.videos[:20]
+                top20 = myChannel.videos[:20]
 
                 # pick 6 different videos randomly also check that it is not already chosen
 
                 print('Выбор 6 видео из 20...')
 
                 for i in range(6):
-                    randomIndex = random.randint(0, len(top10) - 1)
-                    while top10[randomIndex] in mashupList or top10[randomIndex].title in [video.title for video in mashupList]:
-                        randomIndex = random.randint(0, len(top10) - 1)
-                    mashupList.append(top10[randomIndex])
+                    randomIndex = random.randint(0, len(top20) - 1)
+                    mashupList.append(top20[randomIndex])
+                    top20.pop(randomIndex)
                 
                 # pick 6 videos randomly except already chosen
 
@@ -194,9 +193,8 @@ if __name__ == '__main__':
 
                 for i in range(6):
                     randomIndex = random.randint(0, len(myChannel.videos) - 1)
-                    while myChannel.videos[randomIndex] in mashupList or myChannel.videos[randomIndex].title in [video.title for video in mashupList]:
-                        randomIndex = random.randint(0, len(myChannel.videos) - 1)
                     mashupList.append(myChannel.videos[randomIndex])
+                    myChannel.videos.pop(randomIndex)
 
                 # create copy of mashupList to hash
 

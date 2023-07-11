@@ -85,6 +85,8 @@ class YouTube:
 
         for i in range(times):
             for item in response.json()['items']:
+                if processed_results == total_results:
+                    break
                 video = MyVideo(item['id']['videoId'], access_token)
                 if video.duration > 60 and video.duration <= 180:
                     videos_list.append(video)
