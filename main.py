@@ -192,9 +192,11 @@ if __name__ == '__main__':
 
                 print('Выбор 6 видео из остальных...')
 
-                with open('left_videos.txt', 'r') as w:
+                # write titles of videos left in myChannel.videos
+
+                with open('left.txt', 'w') as f:
                     for video in myChannel.videos:
-                        w.write(video.title + '\n')
+                        f.write(video.title + '\n')
 
                 for i in range(6):
                     randomIndex = random.randint(0, len(myChannel.videos) - 1)
