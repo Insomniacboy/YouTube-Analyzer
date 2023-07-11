@@ -127,6 +127,10 @@ if __name__ == '__main__':
 
                 print('Получено видео: {} штук'.format(len(myChannel.videos)))
 
+                with open('videos.txt', 'w') as f:
+                    for video in myChannel.videos:
+                        f.write(video.title + '\n')
+
                 mashupList = []
 
                 print('Создание списка для мэшапа...')
@@ -143,6 +147,8 @@ if __name__ == '__main__':
                     # add last video from my channel
 
                     mashupList.append(myChannel.videos[0])
+
+                    myChannel.videos.pop(0)
 
                     print('Добавлено видео: {}'.format(myChannel.videos[0].title))
 
@@ -162,6 +168,8 @@ if __name__ == '__main__':
 
                     mashupList.append(myChannel.videos[len(myChannel.videos) - 1])
 
+                    myChannel.videos.pop(len(myChannel.videos) - 1)
+
                     print('Добавлено видео: {}'.format(myChannel.videos[len(myChannel.videos) - 1].title))
 
                 # take 10 videos with highest retention rate and pick 5 of them randomly
@@ -171,6 +179,10 @@ if __name__ == '__main__':
                 print('Сортировка видео по retention rate...')
 
                 myChannel.videos.sort(key=lambda x: x.retention_rate, reverse=True)
+
+                with open('retention.txt', 'w') as f:
+                    for video in myChannel.videos:
+                        f.write(video.title + '\n')
                 
                 # create list of 20 videos with highest retention rate
 
