@@ -2,3 +2,4 @@
 git stash
 git pull
 chmod +x main.py
+python3 main.py
