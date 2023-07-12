@@ -105,5 +105,15 @@ class YouTube:
     def uploadVideo(video_path, title, description):
         MyVideo.upload(video_path, title, description)
 
+    def sortByRetentionRate(self):
+        # write a function to sort videos by retention rate
+        if len(self.videos) <= 1:
+            return
+        else:
+            pivot = self.videos[0]
+            less = [x for x in self.videos[1:] if x.retention_rate < pivot.retention_rate]
+            more = [x for x in self.videos[1:] if x.retention_rate >= pivot.retention_rate]
+            self.videos = YouTube.sortByRetentionRate(self, less) + [pivot] + YouTube.sortByRetentionRate(self, more)
+
     def __str__(self):
         return self.author + " - " + self.url + " - " + self.channelId
