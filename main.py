@@ -127,9 +127,9 @@ if __name__ == '__main__':
 
                 print('Получено видео: {} штук'.format(len(myChannel.videos)))
 
-                with open('videos.txt', 'w') as f:
-                    for video in myChannel.videos:
-                        f.write(video.title + '\n')
+                # with open('videos.txt', 'w') as f:
+                #     for video in myChannel.videos:
+                #         f.write(video.title + '\n')
 
                 mashupList = []
 
@@ -180,11 +180,11 @@ if __name__ == '__main__':
 
                 # myChannel.videos.sort(key=lambda x: x.retention_rate, reverse=True)
 
-                myChannel.sortByRetentionRate()
+                myChannel.videos = myChannel.sortByRetentionRate(myChannel.videos)
 
-                with open('retention.txt', 'w') as f:
-                    for video in myChannel.videos:
-                        f.write(video.title + '\n')
+                # with open('retention.txt', 'w') as f:
+                #     for video in myChannel.videos:
+                #         f.write(video.title + '\n')
                 
                 # create list of 20 videos with highest retention rate
 
@@ -208,9 +208,9 @@ if __name__ == '__main__':
 
                 # write titles of videos left in myChannel.videos
 
-                with open('left.txt', 'w') as f:
-                    for video in myChannel.videos:
-                        f.write(video.title + '\n')
+                # with open('left.txt', 'w') as f:
+                #     for video in myChannel.videos:
+                #         f.write(video.title + '\n')
 
                 for i in range(6):
                     randomIndex = random.randint(0, len(myChannel.videos) - 1)
