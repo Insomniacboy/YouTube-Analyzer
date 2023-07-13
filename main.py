@@ -154,19 +154,33 @@ if __name__ == '__main__':
                     ]
                     answers = prompt(questions)
 
-                    myChannel.appendVideo(answers["url"].split('=')[1])
+                    # check if video is already in myChannel.videos
 
-                    # change speed rate for added video
+                    idx = 0
 
-                    myChannel.videos[len(myChannel.videos) - 1].set_speed_rate(1.00)
+                    for video in myChannel.videos:
+                        if answers["url"].split('=')[1] == video.url.split('=')[1]:
+                            break
+                        idx += 1                            
+                    if idx < len(myChannel.videos):
+                        myChannel.videos[idx].set_speed_rate(1.00)
+                        mashupList.append(myChannel.videos[idx])
+                        myChannel.videos.pop(idx)
+                        print('Добавлено видео: {}'.format(mashupList[len(mashupList) - 1].title))
+                    else:
+                        myChannel.appendVideo(answers["url"].split('=')[1])
 
-                    # add this video to mashupList
+                        # change speed rate for added video
 
-                    mashupList.append(myChannel.videos[len(myChannel.videos) - 1])
+                        myChannel.videos[len(myChannel.videos) - 1].set_speed_rate(1.00)
 
-                    myChannel.videos.pop(len(myChannel.videos) - 1)
+                        # add this video to mashupList
 
-                    print('Добавлено видео: {}'.format(myChannel.videos[len(myChannel.videos) - 1].title))
+                        mashupList.append(myChannel.videos[len(myChannel.videos) - 1])
+
+                        myChannel.videos.pop(len(myChannel.videos) - 1)
+
+                        print('Добавлено видео: {}'.format(myChannel.videos[len(myChannel.videos) - 1].title))
 
                 # take 10 videos with highest retention rate and pick 5 of them randomly
 
