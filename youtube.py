@@ -95,7 +95,7 @@ class YouTube:
                 print('Обработано: {}/{}'.format(processed_results, total_results), end='\r')
             
             url = YouTube.VIDEO_URL + self.channelId + '&pageToken=' + response.json()['nextPageToken'] + '&maxResults='  + str(sample_size * 8)
-            url = 'https://youtube.googleapis.com/youtube/v3/search?' + 'pageToken=' + response.json()['nextPageToken'] + '&part=snippet&type=video&order=date&key=' + API_KEY + '&channelId=' + self.channelId + '&maxResults='  + str(sample_size * 8)
+            response = requests.get(url)
 
         return videos_list
     
@@ -105,16 +105,6 @@ class YouTube:
 
     def uploadVideo(video_path, title, description):
         MyVideo.upload(video_path, title, description)
-
-    def sortByRetentionRate(self, videos):
-        # write a function to sort videos by retention rate
-        if len(videos) <= 1:
-            return videos
-        else:
-            pivot = videos[0]
-            less = [x for x in videos[1:] if x.retention_rate < pivot.retention_rate]
-            more = [x for x in videos[1:] if x.retention_rate >= pivot.retention_rate]
-            return YouTube.sortByRetentionRate(self, less) + [pivot] + YouTube.sortByRetentionRate(self, more)
 
     def __str__(self):
         return self.author + " - " + self.url + " - " + self.channelId

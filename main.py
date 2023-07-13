@@ -188,9 +188,7 @@ if __name__ == '__main__':
 
                 print('Сортировка видео по retention rate...')
 
-                # myChannel.videos.sort(key=lambda x: x.retention_rate, reverse=True)
-
-                myChannel.videos = myChannel.sortByRetentionRate(myChannel.videos)
+                myChannel.videos.sort(key=lambda x: x.retention_rate, reverse=True)
 
                 with open('s1.txt', 'w') as f:
                     for video in myChannel.videos:
