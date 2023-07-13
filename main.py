@@ -127,10 +127,6 @@ if __name__ == '__main__':
 
                 print('Получено видео: {} штук'.format(len(myChannel.videos)))
 
-                # with open('videos.txt', 'w') as f:
-                #     for video in myChannel.videos:
-                #         f.write(video.title + '\n')
-
                 mashupList = []
 
                 print('Создание списка для мэшапа...')
@@ -182,9 +178,9 @@ if __name__ == '__main__':
 
                 myChannel.videos = myChannel.sortByRetentionRate(myChannel.videos)
 
-                # with open('retention.txt', 'w') as f:
-                #     for video in myChannel.videos:
-                #         f.write(video.title + '\n')
+                with open('s1.txt', 'w') as f:
+                    for video in myChannel.videos:
+                        f.write(video.title + '\n')
                 
                 # create list of 20 videos with highest retention rate
 
@@ -201,6 +197,10 @@ if __name__ == '__main__':
                     mashupList.append(myChannel.videos[randomIndex])
                     myChannel.videos.pop(randomIndex)
                     supremum -= 1
+
+                with open('s2.txt', 'w') as f:
+                    for video in myChannel.videos:
+                        f.write(video.title + '\n')
                 
                 # pick 6 videos randomly except already chosen
 
@@ -208,14 +208,14 @@ if __name__ == '__main__':
 
                 # write titles of videos left in myChannel.videos
 
-                # with open('left.txt', 'w') as f:
-                #     for video in myChannel.videos:
-                #         f.write(video.title + '\n')
-
                 for i in range(6):
                     randomIndex = random.randint(0, len(myChannel.videos) - 1)
                     mashupList.append(myChannel.videos[randomIndex])
                     myChannel.videos.pop(randomIndex)
+
+                with open('s3.txt', 'w') as f:
+                    for video in myChannel.videos:
+                        f.write(video.title + '\n')
 
                 # create copy of mashupList to hash
 
@@ -251,21 +251,44 @@ if __name__ == '__main__':
                         for row in reader:
                             if row['Hash'] == str(mashupHash):
                                 print('Мэшап с таким хэшем уже существует')
-                    # add mashup to mashups.csv
-                    with open('db/mashups.csv', 'a') as f:
-                        writer = csv.DictWriter(f, fieldnames=['Hash', 'Videos'])
-                        writer.writerow({'Hash': mashupHash, 'Videos': mashupNameList})
-                        isAdded = True
-                        print('Хэш мэшапа добавлен')
+                    # output mashupList to console
+                    print('Список для мэшапа:')
+                    for video in mashupList:
+                        print(video.title)
+                    # ask user to confirm
+                    questions = [
+                        {"type": "confirm", "message": "Создать мэшап?", "name": "choice"},
+                    ]
+                    answers = prompt(questions)
+                    if answers["choice"] == True:
+                        # add mashup to mashups.csv
+                        with open('db/mashups.csv', 'a') as f:
+                            writer = csv.DictWriter(f, fieldnames=['Hash', 'Videos'])
+                            writer.writerow({'Hash': mashupHash, 'Videos': mashupNameList})
+                            isAdded = True
+                            print('Хэш мэшапа добавлен')
+                    else:
+                        exit(0)
                 else:
-                    # create mashups.csv
-                    with open('db/mashups.csv', 'w') as f:
-                        writer = csv.DictWriter(f, fieldnames=['Hash', 'Videos'])
-                        writer.writeheader()
-                        writer.writerow({'Hash': mashupHash, 'Videos': mashupNameList})
-                        isAdded = True
-                        print('Хэш мэшапа добавлен')
-                
+                    # output mashupList to console
+                    print('Список для мэшапа:')
+                    for video in mashupList:
+                        print(video.title)
+                    # ask user to confirm
+                    questions = [
+                        {"type": "confirm", "message": "Создать мэшап?", "name": "choice"},
+                    ]
+                    answers = prompt(questions)
+                    if answers["choice"] == True:
+                        # create mashups.csv
+                        with open('db/mashups.csv', 'w') as f:
+                            writer = csv.DictWriter(f, fieldnames=['Hash', 'Videos'])
+                            writer.writeheader()
+                            writer.writerow({'Hash': mashupHash, 'Videos': mashupNameList})
+                            isAdded = True
+                            print('Хэш мэшапа добавлен')
+                    else:
+                        exit(0)
                 if isAdded:
                     break
 
