@@ -76,7 +76,7 @@ class YouTube:
         access_token = get_credentials().token
         self.access_token = access_token
         videos_list = []
-        url = YouTube.VIDEO_URL + self.channelId + '&maxResults=50'
+        url = YouTube.VIDEO_URL + self.channelId + '&maxResults=' + str(sample_size * 8)
         response = requests.get(url)
 
         times = (response.json()['pageInfo']['totalResults'] + response.json()['pageInfo']['resultsPerPage'] - 1) // response.json()['pageInfo']['resultsPerPage']
@@ -92,9 +92,10 @@ class YouTube:
                     videos_list.append(video)
                     print('Добавлено видео: ' + video.title + ' - ' + str(video.duration) + ' секунд')
                 processed_results += 1
-                print('Обработано: {}/{}'.format(processed_results, total_results))
+                print('Обработано: {}/{}'.format(processed_results, total_results), end='\r')
             
-            url = YouTube.VIDEO_URL + self.channelId + '&maxResults=' + str(sample_size) + '&pageToken=' + response.json()['nextPageToken']
+            url = YouTube.VIDEO_URL + self.channelId + '&pageToken=' + response.json()['nextPageToken'] + '&maxResults='  + str(sample_size * 8)
+            url = 'https://youtube.googleapis.com/youtube/v3/search?' + 'pageToken=' + response.json()['nextPageToken'] + '&part=snippet&type=video&order=date&key=' + API_KEY + '&channelId=' + self.channelId + '&maxResults='  + str(sample_size * 8)
 
         return videos_list
     
