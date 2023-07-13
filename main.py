@@ -104,12 +104,12 @@ if __name__ == '__main__':
             # get sample size from input
             print('Введите количество последних видео для анализа (минимум 15): ', end='')
 
-            sample_size = 15
+            sample_size = 25
 
             while True:
                 try:
                     sample_size = int(input())
-                    if sample_size < 15:
+                    if sample_size < 25:
                         raise ValueError
                     break
                 except ValueError:

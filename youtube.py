@@ -26,7 +26,7 @@ class YouTube:
     def __init__(self, *args):
         sample_size = 50
         if len(args) == 1:
-            sample_size = args[0] * 4
+            sample_size = args[0]
             self.channelId = MY_CHANNEL_ID
             self.author = YouTube.get_channel_author_by_id(self, MY_CHANNEL_ID)
             self.url = 'https://www.youtube.com/channel/' + MY_CHANNEL_ID
@@ -76,7 +76,7 @@ class YouTube:
         access_token = get_credentials().token
         self.access_token = access_token
         videos_list = []
-        url = YouTube.VIDEO_URL + self.channelId + '&maxResults=' + str(sample_size)
+        url = YouTube.VIDEO_URL + self.channelId + '&maxResults=50'
         response = requests.get(url)
 
         times = (response.json()['pageInfo']['totalResults'] + response.json()['pageInfo']['resultsPerPage'] - 1) // response.json()['pageInfo']['resultsPerPage']
@@ -85,7 +85,7 @@ class YouTube:
 
         for i in range(times):
             for item in response.json()['items']:
-                if processed_results == total_results:
+                if len(videos_list) == sample_size or processed_results == total_results:
                     break
                 video = MyVideo(item['id']['videoId'], access_token)
                 if video.duration > 60 and video.duration <= 180 and video not in videos_list:
