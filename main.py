@@ -102,7 +102,7 @@ if __name__ == '__main__':
                         writer.writerow({'Channel': channel.author, 'Video': emoji_pattern.sub(r'', video.title), 'Views': views, 'Date': video.date, 'Likes': likes, 'URL': video.url})
         elif answers["choice"] == "Создание мэшапа":
             # get sample size from input
-            print('Введите количество последних видео для анализа (минимум 15): ', end='')
+            print('Введите количество последних видео для анализа (минимум 25): ', end='')
 
             sample_size = 25
 
