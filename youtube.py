@@ -79,11 +79,10 @@ class YouTube:
         url = YouTube.VIDEO_URL + self.channelId + '&maxResults=' + str(sample_size * 8)
         response = requests.get(url)
 
-        times = (response.json()['pageInfo']['totalResults'] + response.json()['pageInfo']['resultsPerPage'] - 1) // response.json()['pageInfo']['resultsPerPage']
         total_results = response.json()['pageInfo']['totalResults']
         processed_results = 0
 
-        for i in range(times):
+        while 'nextPageToken' in response.json():
             for item in response.json()['items']:
                 if len(videos_list) == sample_size or processed_results == total_results:
                     break
@@ -93,7 +92,9 @@ class YouTube:
                     print('Добавлено видео: ' + video.title + ' - ' + str(video.duration) + ' секунд')
                 processed_results += 1
                 print('Обработано: {}/{}'.format(processed_results, total_results), end='\r')
-            
+
+            if 'nextPageToken' not in response.json():
+                break
             url = YouTube.VIDEO_URL + self.channelId + '&pageToken=' + response.json()['nextPageToken'] + '&maxResults='  + str(sample_size * 8)
             response = requests.get(url)
 

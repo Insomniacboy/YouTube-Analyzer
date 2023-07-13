@@ -189,10 +189,6 @@ if __name__ == '__main__':
                 print('Сортировка видео по retention rate...')
 
                 myChannel.videos.sort(key=lambda x: x.retention_rate, reverse=True)
-
-                with open('s1.txt', 'w') as f:
-                    for video in myChannel.videos:
-                        f.write(video.title + '\n')
                 
                 # create list of 20 videos with highest retention rate
 
@@ -209,10 +205,6 @@ if __name__ == '__main__':
                     mashupList.append(myChannel.videos[randomIndex])
                     myChannel.videos.pop(randomIndex)
                     supremum -= 1
-
-                with open('s2.txt', 'w') as f:
-                    for video in myChannel.videos:
-                        f.write(video.title + '\n')
                 
                 # pick 6 videos randomly except already chosen
 
@@ -224,10 +216,6 @@ if __name__ == '__main__':
                     randomIndex = random.randint(0, len(myChannel.videos) - 1)
                     mashupList.append(myChannel.videos[randomIndex])
                     myChannel.videos.pop(randomIndex)
-
-                with open('s3.txt', 'w') as f:
-                    for video in myChannel.videos:
-                        f.write(video.title + '\n')
 
                 # create copy of mashupList to hash
 
