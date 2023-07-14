@@ -93,10 +93,18 @@ class YouTube:
                 processed_results += 1
                 print('Обработано: {}/{}'.format(processed_results, total_results), end='\r')
 
-            if 'nextPageToken' not in response.json():
-                break
             url = YouTube.VIDEO_URL + self.channelId + '&pageToken=' + response.json()['nextPageToken'] + '&maxResults='  + str(sample_size * 8)
             response = requests.get(url)
+
+        for item in response.json()['items']:
+            if len(videos_list) == sample_size or processed_results == total_results:
+                break
+            video = MyVideo(item['id']['videoId'], access_token)
+            if video.duration > 60 and video.duration <= 180 and video not in videos_list:
+                videos_list.append(video)
+                print('Добавлено видео: ' + video.title + ' - ' + str(video.duration) + ' секунд')
+            processed_results += 1
+            print('Обработано: {}/{}'.format(processed_results, total_results), end='\r')
 
         return videos_list
     
