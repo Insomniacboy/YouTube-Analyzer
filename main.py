@@ -320,7 +320,11 @@ if __name__ == '__main__':
                 video = VideoFileClip('./data/videos/' + mashupList[i].safe_title + '.mp4').fx(vfx.speedx, mashupList[i].speed_rate)
                 mashup = concatenate_videoclips([mashup, video])
                 # strip "| Hokie Pokie Kids Videos"
-                videoTitle = mashupList[i].title.split('|')[0]
+                videoTitle = mashupList[i].title
+                try:
+                    videoTitle = videoTitle.split('|')[0]
+                except:
+                    pass
                 timestamps.append(curr_time + ' - ' + mashupList[i].title)
                 curr_time = convert_to_time(mashupList[i].duration / mashupList[i].speed_rate + convert_to_seconds(curr_time))
 
