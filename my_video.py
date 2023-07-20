@@ -42,6 +42,7 @@ class MyVideo:
         self.title = response.json()['items'][0]['snippet']['title']
         self.safe_title = re.sub(r'[ :?!\'\".,;(){}\[\]/\\|]', '', self.title)
         self.safe_title = self.safe_title.replace('|', '_')
+        self.safe_title = self.safe_title.replace('#', '')
         self.date = datetime.datetime.strptime(response.json()['items'][0]['snippet']['publishedAt'], '%Y-%m-%dT%H:%M:%SZ')
         self.views = response.json()['items'][0]['statistics']['viewCount']
         self.likes = response.json()['items'][0]['statistics']['likeCount']
