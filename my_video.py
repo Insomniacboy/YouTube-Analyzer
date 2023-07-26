@@ -35,23 +35,36 @@ class MyVideo:
     retention_rate = 0
     speed_rate = 0
 
-    def __init__(self, videoId, access_token):
-        url = MyVideo.VIDEO_STATS_URL + videoId
-        response = requests.get(url)
+    def __init__(self, videoId, access_token, isMock = False, duration = 0):
+        if not isMock:
+            url = MyVideo.VIDEO_STATS_URL + videoId
+            response = requests.get(url)
 
-        self.title = response.json()['items'][0]['snippet']['title']
-        self.safe_title = re.sub(r'[ :?!\'\".,;(){}\[\]/\\|]', '', self.title)
-        self.safe_title = self.safe_title.replace('|', '_')
-        self.safe_title = self.safe_title.replace('#', '')
-        self.date = datetime.datetime.strptime(response.json()['items'][0]['snippet']['publishedAt'], '%Y-%m-%dT%H:%M:%SZ')
-        self.views = response.json()['items'][0]['statistics']['viewCount']
-        self.likes = response.json()['items'][0]['statistics']['likeCount']
-        self.url = 'https://www.youtube.com/watch?v=' + videoId
-        duration = response.json()['items'][0]['contentDetails']['duration']
-        self.duration = convert_to_seconds(duration) if duration != '' else 0
-        url = MyVideo.REPORTING_URL + datetime.datetime.today().strftime('%Y-%m-%d') + '&dimensions=video&filters=video=={}&access_token={}'.format(videoId, access_token)
-        self.retention_rate = requests.get(url).json()['rows'][0][1] if len(requests.get(url).json()['rows']) > 0 else 0
-        self.speed_rate = float((100 + random.randint(1, 10)) / 100)
+            self.title = response.json()['items'][0]['snippet']['title']
+            self.safe_title = re.sub(r'[ :?!\'\".,;(){}\[\]/\\|]', '', self.title)
+            self.safe_title = self.safe_title.replace('|', '_')
+            self.safe_title = self.safe_title.replace('#', '')
+            self.date = datetime.datetime.strptime(response.json()['items'][0]['snippet']['publishedAt'], '%Y-%m-%dT%H:%M:%SZ')
+            self.views = response.json()['items'][0]['statistics']['viewCount']
+            self.likes = response.json()['items'][0]['statistics']['likeCount']
+            self.url = 'https://www.youtube.com/watch?v=' + videoId
+            duration = response.json()['items'][0]['contentDetails']['duration']
+            self.duration = convert_to_seconds(duration) if duration != '' else 0
+            url = MyVideo.REPORTING_URL + datetime.datetime.today().strftime('%Y-%m-%d') + '&dimensions=video&filters=video=={}&access_token={}'.format(videoId, access_token)
+            self.retention_rate = requests.get(url).json()['rows'][0][1] if len(requests.get(url).json()['rows']) > 0 else 0
+            self.speed_rate = float((100 + random.randint(1, 10)) / 100)
+        else:
+            self.title = videoId
+            self.safe_title = re.sub(r'[ :?!\'\".,;(){}\[\]/\\|]', '', self.title)
+            self.safe_title = self.safe_title.replace('|', '_')
+            self.safe_title = self.safe_title.replace('#', '')
+            self.date = datetime.datetime.today()
+            self.views = 0
+            self.likes = 0
+            self.url = ''
+            self.duration = duration
+            self.retention_rate = 0
+            self.speed_rate = 1.0
 
     def download(self):
         video = pytube.YouTube(self.url)

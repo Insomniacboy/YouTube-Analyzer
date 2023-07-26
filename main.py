@@ -6,6 +6,7 @@ import requests
 import json
 import os
 from youtube import YouTube
+from my_video import MyVideo
 import re
 import csv
 import locale
@@ -14,6 +15,7 @@ from InquirerPy import inquirer
 from InquirerPy import prompt
 import random
 from moviepy.editor import *
+import cv2
 
 emoji_pattern = re.compile("["
         u"\U0001F600-\U0001F64F"  # emoticons
@@ -48,7 +50,9 @@ def convert_to_time(seconds):
     seconds = int(seconds % 60)
     return '{:02d}:{:02d}'.format(minutes, seconds)
 
-NUMBER_OF_VIDEOS = 13
+
+X = 6
+Y = 6
 
 # Main function
 if __name__ == '__main__':
@@ -132,7 +136,7 @@ if __name__ == '__main__':
                 print('Создание списка для мэшапа...')
 
                 questions = [
-                    {"type": "list", "message": "Сделать первым видео:", "name": "choice", "choices": ["Последнее на канале", "Добавить вручную по cсылке"]},
+                    {"type": "list", "message": "Сделать первым видео:", "name": "choice", "choices": ["Последнее на канале", "Добавить вручную по cсылке", "Выбрать из папки videos"]},
                 ]
                 answers = prompt(questions)
 
@@ -148,7 +152,7 @@ if __name__ == '__main__':
 
                     print('Добавлено видео: {}'.format(myChannel.videos[0].title))
 
-                else: 
+                elif answers["choice"] == "Добавить вручную по cсылке":
                     questions = [
                         {"type": "input", "message": "Введите ссылку на видео:", "name": "url"},
                     ]
@@ -182,6 +186,67 @@ if __name__ == '__main__':
 
                         print('Добавлено видео: {}'.format(myChannel.videos[len(myChannel.videos) - 1].title))
 
+                elif answers["choice"] == "Выбрать из папки videos":
+                    # get list of videos from data/videos folder
+                    videosInFolder = []
+                    for file in os.listdir('./data/videos'):
+                        if file.endswith('.mp4'):
+                            videosInFolder.append(file)
+                    # create list of choices for InquirerPy
+                    
+                    if len(videosInFolder) == 0:
+                        print('Нет видео для выбора')
+                        exit(0)
+
+                    # ask user to choose video
+                    questions = [
+                        {"type": "list", "message": "Выберите видео", "name": "choice", "choices": videosInFolder},
+                    ]
+                    answers = prompt(questions)
+
+                    # Create MyVideo mocked object from video in data/videos folder
+
+                    # get duration of video
+
+                    duration = 0
+
+                    try:
+                        video = cv2.VideoCapture('./data/videos/' + answers['choice'])
+                        duration = round(video.get(cv2.CAP_PROP_FRAME_COUNT) / video.get(cv2.CAP_PROP_FPS))
+                    except:
+                        print('Не удалось получить длительность видео')
+
+                    myVideo = MyVideo(answers['choice'].split('.')[0], '', True, duration)
+
+                    mashupList.append(myVideo)
+
+                    print('Добавлено видео: {}'.format(myVideo.title))
+
+                # Now prompt to choose X and Y where X <= 20:
+
+                print('Мэшап создается по схеме: 1 + X + Y')
+
+                print('Введите X (максимум 20): ', end='')
+                while True:
+                    try:
+                        X = int(input())
+                        if X > 20:
+                            raise ValueError
+                        break
+                    except ValueError:
+                        print('Неверный ввод. Введите целое число (максимум 20): ', end='')
+                
+                print('Введите Y (максимум 20): ', end='')
+                while True:
+                    try:
+                        Y = int(input())
+                        if Y > 20:
+                            raise ValueError
+                        break
+                    except ValueError:
+                        print('Неверный ввод. Введите целое число (максимум 20): ', end='')
+                    
+
                 # take 10 videos with highest retention rate and pick 5 of them randomly
 
                 # sort videos by retention rate
@@ -198,9 +263,9 @@ if __name__ == '__main__':
 
                 # pick 6 different videos randomly also check that it is not already chosen
 
-                print('Выбор 6 видео из 20...')
+                print('Выбор {} видео из 20...'.format(X))
 
-                for i in range(6):
+                for i in range(X):
                     randomIndex = random.randint(0, supremum - 1)
                     mashupList.append(myChannel.videos[randomIndex])
                     myChannel.videos.pop(randomIndex)
@@ -208,11 +273,11 @@ if __name__ == '__main__':
                 
                 # pick 6 videos randomly except already chosen
 
-                print('Выбор 6 видео из остальных...')
+                print('Выбор {} видео из остальных...'.format(Y))
 
                 # write titles of videos left in myChannel.videos
 
-                for i in range(6):
+                for i in range(Y):
                     randomIndex = random.randint(0, len(myChannel.videos) - 1)
                     mashupList.append(myChannel.videos[randomIndex])
                     myChannel.videos.pop(randomIndex)
@@ -299,9 +364,10 @@ if __name__ == '__main__':
             videoCnt = 0
 
             for video in mashupList:
-                video.download()
+                if video.url != '':
+                    video.download()
                 videoCnt += 1
-                print('{}/{}'.format(videoCnt, NUMBER_OF_VIDEOS), end='\r')
+                print('{}/{}'.format(videoCnt, 1 + X + Y), end='\r')
 
             print('Создание мэшапа...')
 
@@ -316,7 +382,7 @@ if __name__ == '__main__':
             mashup = VideoFileClip('./data/videos/' + mashupList[0].safe_title + '.mp4').fx(vfx.speedx, mashupList[0].speed_rate)
             timestamps.append(curr_time + ' - ' + mashupList[0].title)
             curr_time = convert_to_time(mashupList[0].duration / mashupList[0].speed_rate)
-            for i in range(1, NUMBER_OF_VIDEOS):
+            for i in range(1, 1 + X + Y):
                 video = VideoFileClip('./data/videos/' + mashupList[i].safe_title + '.mp4').fx(vfx.speedx, mashupList[i].speed_rate)
                 mashup = concatenate_videoclips([mashup, video])
                 # strip "| Hokie Pokie Kids Videos"
