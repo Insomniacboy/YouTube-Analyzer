@@ -55,9 +55,7 @@ class MyVideo:
             self.speed_rate = float((100 + random.randint(1, 10)) / 100)
         else:
             self.title = videoId
-            self.safe_title = re.sub(r'[ :?!\'\".,;(){}\[\]/\\|]', '', self.title)
-            self.safe_title = self.safe_title.replace('|', '_')
-            self.safe_title = self.safe_title.replace('#', '')
+            self.safe_title = self.title
             self.date = datetime.datetime.today()
             self.views = 0
             self.likes = 0

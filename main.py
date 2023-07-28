@@ -131,291 +131,292 @@ if __name__ == '__main__':
 
                 print('Получено видео: {} штук'.format(len(myChannel.videos)))
 
-                mashupList = []
+                while True:
 
-                print('Создание списка для мэшапа...')
+                    mashupList = []
 
-                questions = [
-                    {"type": "list", "message": "Сделать первым видео:", "name": "choice", "choices": ["Последнее на канале", "Добавить вручную по cсылке", "Выбрать из папки videos"]},
-                ]
-                answers = prompt(questions)
+                    print('Создание списка для мэшапа...')
 
-                if answers["choice"] == "Последнее на канале":
-
-                    myChannel.videos[0].set_speed_rate(1.00)
-
-                    # add last video from my channel
-
-                    mashupList.append(myChannel.videos[0])
-
-                    myChannel.videos.pop(0)
-
-                    print('Добавлено видео: {}'.format(myChannel.videos[0].title))
-
-                elif answers["choice"] == "Добавить вручную по cсылке":
                     questions = [
-                        {"type": "input", "message": "Введите ссылку на видео:", "name": "url"},
+                        {"type": "list", "message": "Сделать первым видео:", "name": "choice", "choices": ["Последнее на канале", "Добавить вручную по cсылке", "Выбрать из папки videos"]},
                     ]
                     answers = prompt(questions)
 
-                    # check if video is already in myChannel.videos
+                    if answers["choice"] == "Последнее на канале":
 
-                    idx = 0
+                        myChannel.videos[0].set_speed_rate(1.00)
 
-                    for video in myChannel.videos:
-                        if answers["url"].split('=')[1] == video.url.split('=')[1]:
+                        # add last video from my channel
+
+                        mashupList.append(myChannel.videos[0])
+
+                        print('Добавлено видео: {}'.format(myChannel.videos[0].title))
+
+                    elif answers["choice"] == "Добавить вручную по cсылке":
+                        questions = [
+                            {"type": "input", "message": "Введите ссылку на видео:", "name": "url"},
+                        ]
+                        answers = prompt(questions)
+
+                        # check if video is already in myChannel.videos
+
+                        idx = 0
+
+                        for video in myChannel.videos:
+                            if answers["url"].split('=')[1] == video.url.split('=')[1]:
+                                break
+                            idx += 1                            
+                        if idx < len(myChannel.videos):
+                            myChannel.videos[idx].set_speed_rate(1.00)
+                            mashupList.append(myChannel.videos[idx])
+                            print('Добавлено видео: {}'.format(mashupList[len(mashupList) - 1].title))
+                        else:
+                            myChannel.appendVideo(answers["url"].split('=')[1])
+
+                            # change speed rate for added video
+
+                            myChannel.videos[len(myChannel.videos) - 1].set_speed_rate(1.00)
+
+                            # add this video to mashupList
+
+                            mashupList.append(myChannel.videos[len(myChannel.videos) - 1])
+
+                            print('Добавлено видео: {}'.format(myChannel.videos[len(myChannel.videos) - 1].title))
+
+                    elif answers["choice"] == "Выбрать из папки videos":
+                        # get list of videos from data/videos folder
+                        videosInFolder = []
+                        for file in os.listdir('./data/videos'):
+                            if file.endswith('.mp4'):
+                                videosInFolder.append(file)
+                        # create list of choices for InquirerPy
+                        
+                        if len(videosInFolder) == 0:
+                            print('Нет видео для выбора')
+                            exit(0)
+
+                        # ask user to choose video
+                        questions = [
+                            {"type": "list", "message": "Выберите видео", "name": "choice", "choices": videosInFolder},
+                        ]
+                        answers = prompt(questions)
+
+                        # Create MyVideo mocked object from video in data/videos folder
+
+                        # get duration of video
+
+                        duration = 0
+
+                        try:
+                            video = cv2.VideoCapture('./data/videos/' + answers['choice'])
+                            duration = round(video.get(cv2.CAP_PROP_FRAME_COUNT) / video.get(cv2.CAP_PROP_FPS))
+                        except:
+                            print('Не удалось получить длительность видео')
+
+                        myVideo = MyVideo(answers['choice'].split('.')[0], '', True, duration)
+
+                        mashupList.append(myVideo)
+
+                        print('Добавлено видео: {}'.format(myVideo.title))
+
+                    # Now prompt to choose X and Y where X <= 20:
+
+                    print('Мэшап создается по схеме: 1 + X + Y')
+
+                    print('Введите X (максимум 20): ', end='')
+                    while True:
+                        try:
+                            X = int(input())
+                            if X > 20:
+                                raise ValueError
                             break
-                        idx += 1                            
-                    if idx < len(myChannel.videos):
-                        myChannel.videos[idx].set_speed_rate(1.00)
-                        mashupList.append(myChannel.videos[idx])
-                        myChannel.videos.pop(idx)
-                        print('Добавлено видео: {}'.format(mashupList[len(mashupList) - 1].title))
+                        except ValueError:
+                            print('Неверный ввод. Введите целое число (максимум 20): ', end='')
+                    
+                    print('Введите Y (максимум 20): ', end='')
+                    while True:
+                        try:
+                            Y = int(input())
+                            if Y > 20:
+                                raise ValueError
+                            break
+                        except ValueError:
+                            print('Неверный ввод. Введите целое число (максимум 20): ', end='')
+                    
+                
+                    # take 10 videos with highest retention rate and pick 5 of them randomly
+
+                    # sort videos by retention rate
+
+                    print('Сортировка видео по retention rate...')
+
+                    myChannel.videos.sort(key=lambda x: x.retention_rate, reverse=True)
+                    
+                    # create list of 20 videos with highest retention rate
+
+                    print('Выбор 20 видео с наибольшим retention rate...')
+
+                    supremum = 20
+
+                    # pick 6 different videos randomly also check that it is not already chosen
+
+                    print('Выбор {} видео из 20...'.format(X))
+
+                    for i in range(X):
+                        randomIndex = random.randint(0, supremum - 1)
+                        while myChannel.videos[randomIndex] in mashupList:
+                            randomIndex = random.randint(0, supremum - 1)
+                        mashupList.append(myChannel.videos[randomIndex])
+                        supremum -= 1
+                    
+                    # pick 6 videos randomly except already chosen
+
+                    print('Выбор {} видео из остальных...'.format(Y))
+
+                    # write titles of videos left in myChannel.videos
+
+                    for i in range(Y):
+                        randomIndex = random.randint(0, len(myChannel.videos) - 1)
+                        while myChannel.videos[randomIndex] in mashupList:
+                            randomIndex = random.randint(0, len(myChannel.videos) - 1)
+                        mashupList.append(myChannel.videos[randomIndex])
+
+                    # create copy of mashupList to hash
+
+                    mashupListCopy = mashupList.copy()
+
+                    # sort mashup list by title
+
+                    mashupListCopy.sort(key=lambda x: x.title)
+
+                    print('Список для мэшапа создан. Хэшируем...')
+
+                    # create hash for mashup
+                    mashupHash = 0
+                    for video in mashupListCopy:
+                        mashupHash += hash(video.title)
+                    mashupHash = mashupHash % 1000000
+
+                    # mashupNameList
+                    mashupNameList = []
+                    for video in mashupList:
+                        mashupNameList.append(video.title)
+
+                    # write or add hash mashup to db/mashups.csv
+
+                    # check if mashups.csv exists
+
+                    isAdded = False
+
+                    if os.path.isfile('db/mashups.csv'):
+                        # read mashups.csv
+                        with open('db/mashups.csv', 'r') as f:
+                            reader = csv.DictReader(f)
+                            for row in reader:
+                                if row['Hash'] == str(mashupHash):
+                                    print('Мэшап с таким хэшем уже существует')
+                        # output mashupList to console
+                        print('Список для мэшапа:')
+                        for video in mashupList:
+                            print(video.title)
+                        # ask user to confirm
+                        questions = [
+                            {"type": "confirm", "message": "Создать мэшап?", "name": "choice"},
+                        ]
+                        answers = prompt(questions)
+                        if answers["choice"] == True:
+                            # add mashup to mashups.csv
+                            with open('db/mashups.csv', 'a') as f:
+                                writer = csv.DictWriter(f, fieldnames=['Hash', 'Videos'])
+                                writer.writerow({'Hash': mashupHash, 'Videos': mashupNameList})
+                                isAdded = True
+                                print('Хэш мэшапа добавлен')
+                        else:
+                            print('-------------------')
+                            continue
                     else:
-                        myChannel.appendVideo(answers["url"].split('=')[1])
-
-                        # change speed rate for added video
-
-                        myChannel.videos[len(myChannel.videos) - 1].set_speed_rate(1.00)
-
-                        # add this video to mashupList
-
-                        mashupList.append(myChannel.videos[len(myChannel.videos) - 1])
-
-                        myChannel.videos.pop(len(myChannel.videos) - 1)
-
-                        print('Добавлено видео: {}'.format(myChannel.videos[len(myChannel.videos) - 1].title))
-
-                elif answers["choice"] == "Выбрать из папки videos":
-                    # get list of videos from data/videos folder
-                    videosInFolder = []
-                    for file in os.listdir('./data/videos'):
-                        if file.endswith('.mp4'):
-                            videosInFolder.append(file)
-                    # create list of choices for InquirerPy
-                    
-                    if len(videosInFolder) == 0:
-                        print('Нет видео для выбора')
-                        exit(0)
-
-                    # ask user to choose video
-                    questions = [
-                        {"type": "list", "message": "Выберите видео", "name": "choice", "choices": videosInFolder},
-                    ]
-                    answers = prompt(questions)
-
-                    # Create MyVideo mocked object from video in data/videos folder
-
-                    # get duration of video
-
-                    duration = 0
-
-                    try:
-                        video = cv2.VideoCapture('./data/videos/' + answers['choice'])
-                        duration = round(video.get(cv2.CAP_PROP_FRAME_COUNT) / video.get(cv2.CAP_PROP_FPS))
-                    except:
-                        print('Не удалось получить длительность видео')
-
-                    myVideo = MyVideo(answers['choice'].split('.')[0], '', True, duration)
-
-                    mashupList.append(myVideo)
-
-                    print('Добавлено видео: {}'.format(myVideo.title))
-
-                # Now prompt to choose X and Y where X <= 20:
-
-                print('Мэшап создается по схеме: 1 + X + Y')
-
-                print('Введите X (максимум 20): ', end='')
-                while True:
-                    try:
-                        X = int(input())
-                        if X > 20:
-                            raise ValueError
+                        # output mashupList to console
+                        print('Список для мэшапа:')
+                        for video in mashupList:
+                            print(video.title)
+                        # ask user to confirm
+                        questions = [
+                            {"type": "confirm", "message": "Создать мэшап?", "name": "choice"},
+                        ]
+                        answers = prompt(questions)
+                        if answers["choice"] == True:
+                            # create mashups.csv
+                            with open('db/mashups.csv', 'w') as f:
+                                writer = csv.DictWriter(f, fieldnames=['Hash', 'Videos'])
+                                writer.writeheader()
+                                writer.writerow({'Hash': mashupHash, 'Videos': mashupNameList})
+                                isAdded = True
+                                print('Хэш мэшапа добавлен')
+                        else:
+                            print('-------------------')
+                            continue
+                    if isAdded:
                         break
-                    except ValueError:
-                        print('Неверный ввод. Введите целое число (максимум 20): ', end='')
+
+                print('Загрузка исходных видео...')
                 
-                print('Введите Y (максимум 20): ', end='')
-                while True:
-                    try:
-                        Y = int(input())
-                        if Y > 20:
-                            raise ValueError
-                        break
-                    except ValueError:
-                        print('Неверный ввод. Введите целое число (максимум 20): ', end='')
-                    
+                # download videos from mashupList to mashup folder
 
-                # take 10 videos with highest retention rate and pick 5 of them randomly
+                videoCnt = 0
 
-                # sort videos by retention rate
-
-                print('Сортировка видео по retention rate...')
-
-                myChannel.videos.sort(key=lambda x: x.retention_rate, reverse=True)
-                
-                # create list of 20 videos with highest retention rate
-
-                print('Выбор 20 видео с наибольшим retention rate...')
-
-                supremum = 20
-
-                # pick 6 different videos randomly also check that it is not already chosen
-
-                print('Выбор {} видео из 20...'.format(X))
-
-                for i in range(X):
-                    randomIndex = random.randint(0, supremum - 1)
-                    mashupList.append(myChannel.videos[randomIndex])
-                    myChannel.videos.pop(randomIndex)
-                    supremum -= 1
-                
-                # pick 6 videos randomly except already chosen
-
-                print('Выбор {} видео из остальных...'.format(Y))
-
-                # write titles of videos left in myChannel.videos
-
-                for i in range(Y):
-                    randomIndex = random.randint(0, len(myChannel.videos) - 1)
-                    mashupList.append(myChannel.videos[randomIndex])
-                    myChannel.videos.pop(randomIndex)
-
-                # create copy of mashupList to hash
-
-                mashupListCopy = mashupList.copy()
-
-                # sort mashup list by title
-
-                mashupListCopy.sort(key=lambda x: x.title)
-
-                print('Список для мэшапа создан. Хэшируем...')
-
-                # create hash for mashup
-                mashupHash = 0
-                for video in mashupListCopy:
-                    mashupHash += hash(video.title)
-                mashupHash = mashupHash % 1000000
-
-                # mashupNameList
-                mashupNameList = []
                 for video in mashupList:
-                    mashupNameList.append(video.title)
+                    if video.url != '':
+                        video.download()
+                    videoCnt += 1
+                    print('{}/{}'.format(videoCnt, 1 + X + Y), end='\r')
 
-                # write or add hash mashup to db/mashups.csv
+                print('Создание мэшапа...')
 
-                # check if mashups.csv exists
+                # create timestamps for mashup in a format like this: 00:00 - 00:30 Video Title; don't forget to count speed rate
 
-                isAdded = False
+                timestamps = []
 
-                if os.path.isfile('db/mashups.csv'):
-                    # read mashups.csv
-                    with open('db/mashups.csv', 'r') as f:
-                        reader = csv.DictReader(f)
-                        for row in reader:
-                            if row['Hash'] == str(mashupHash):
-                                print('Мэшап с таким хэшем уже существует')
-                    # output mashupList to console
-                    print('Список для мэшапа:')
-                    for video in mashupList:
-                        print(video.title)
-                    # ask user to confirm
-                    questions = [
-                        {"type": "confirm", "message": "Создать мэшап?", "name": "choice"},
-                    ]
-                    answers = prompt(questions)
-                    if answers["choice"] == True:
-                        # add mashup to mashups.csv
-                        with open('db/mashups.csv', 'a') as f:
-                            writer = csv.DictWriter(f, fieldnames=['Hash', 'Videos'])
-                            writer.writerow({'Hash': mashupHash, 'Videos': mashupNameList})
-                            isAdded = True
-                            print('Хэш мэшапа добавлен')
-                    else:
-                        exit(0)
-                else:
-                    # output mashupList to console
-                    print('Список для мэшапа:')
-                    for video in mashupList:
-                        print(video.title)
-                    # ask user to confirm
-                    questions = [
-                        {"type": "confirm", "message": "Создать мэшап?", "name": "choice"},
-                    ]
-                    answers = prompt(questions)
-                    if answers["choice"] == True:
-                        # create mashups.csv
-                        with open('db/mashups.csv', 'w') as f:
-                            writer = csv.DictWriter(f, fieldnames=['Hash', 'Videos'])
-                            writer.writeheader()
-                            writer.writerow({'Hash': mashupHash, 'Videos': mashupNameList})
-                            isAdded = True
-                            print('Хэш мэшапа добавлен')
-                    else:
-                        exit(0)
-                if isAdded:
-                    break
+                curr_time = '00:00'
 
-            print('Загрузка исходных видео...')
-            
-            # download videos from mashupList to mashup folder
+                # create mashup.mp4 from videos in mashup folder
 
-            videoCnt = 0
+                mashup = VideoFileClip('./data/videos/' + mashupList[0].safe_title + '.mp4').fx(vfx.speedx, mashupList[0].speed_rate)
+                timestamps.append(curr_time + ' - ' + mashupList[0].title)
+                curr_time = convert_to_time(mashupList[0].duration / mashupList[0].speed_rate)
+                for i in range(1, 1 + X + Y):
+                    video = VideoFileClip('./data/videos/' + mashupList[i].safe_title + '.mp4').fx(vfx.speedx, mashupList[i].speed_rate)
+                    mashup = concatenate_videoclips([mashup, video])
+                    # strip "| Hokie Pokie Kids Videos"
+                    videoTitle = mashupList[i].title
+                    try:
+                        videoTitle = videoTitle.split('|')[0]
+                    except:
+                        pass
+                    timestamps.append(curr_time + ' - ' + videoTitle)
+                    curr_time = convert_to_time(mashupList[i].duration / mashupList[i].speed_rate + convert_to_seconds(curr_time))
 
-            for video in mashupList:
-                if video.url != '':
-                    video.download()
-                videoCnt += 1
-                print('{}/{}'.format(videoCnt, 1 + X + Y), end='\r')
+                # check if mashups folder exists
+                if not os.path.isdir('./data/mashups'):
+                    os.mkdir('./data/mashups')
+                mashup.write_videofile('./data/mashups/mashup-{}.mp4'.format(mashupHash), codec='libx264', audio_codec='aac', bitrate='20000k')
 
-            print('Создание мэшапа...')
+                print('Запись таймстампов...')
 
-            # create timestamps for mashup in a format like this: 00:00 - 00:30 Video Title; don't forget to count speed rate
+                # write timestamps to txt file
 
-            timestamps = []
+                with open('./data/mashups/mashup-{}.txt'.format(mashupHash), 'w') as f:
+                    for timestamp in timestamps:
+                        f.write(timestamp + '\n')
 
-            curr_time = '00:00'
+                print('Удаление исходных видео...')
 
-            # create mashup.mp4 from videos in mashup folder
+                # delete videos from mashup folder
 
-            mashup = VideoFileClip('./data/videos/' + mashupList[0].safe_title + '.mp4').fx(vfx.speedx, mashupList[0].speed_rate)
-            timestamps.append(curr_time + ' - ' + mashupList[0].title)
-            curr_time = convert_to_time(mashupList[0].duration / mashupList[0].speed_rate)
-            for i in range(1, 1 + X + Y):
-                video = VideoFileClip('./data/videos/' + mashupList[i].safe_title + '.mp4').fx(vfx.speedx, mashupList[i].speed_rate)
-                mashup = concatenate_videoclips([mashup, video])
-                # strip "| Hokie Pokie Kids Videos"
-                videoTitle = mashupList[i].title
-                try:
-                    videoTitle = videoTitle.split('|')[0]
-                except:
-                    pass
-                timestamps.append(curr_time + ' - ' + videoTitle)
-                curr_time = convert_to_time(mashupList[i].duration / mashupList[i].speed_rate + convert_to_seconds(curr_time))
-
-            # check if mashups folder exists
-            if not os.path.isdir('./data/mashups'):
-                os.mkdir('./data/mashups')
-            mashup.write_videofile('./data/mashups/mashup-{}.mp4'.format(mashupHash), codec='libx264', audio_codec='aac', bitrate='20000k')
-
-            print('Запись таймстампов...')
-
-            # write timestamps to txt file
-
-            with open('./data/mashups/mashup-{}.txt'.format(mashupHash), 'w') as f:
-                for timestamp in timestamps:
-                    f.write(timestamp + '\n')
-
-            print('Удаление исходных видео...')
-
-            # delete videos from mashup folder
-
-            for video in mashupList:
-                try:
-                    os.remove('./data/videos/' + video.safe_title + '.mp4')
-                except OSError as e:
-                    print('Не удалось удалить видео', video.title, e)
+                for video in mashupList:
+                    try:
+                        os.remove('./data/videos/' + video.safe_title + '.mp4')
+                    except OSError as e:
+                        print('Не удалось удалить видео', video.title, e)
         elif answers["choice"] == "Загрузить мэшап на YouTube":
             # get list of mashups from data/mashups folder
             mashups = []
